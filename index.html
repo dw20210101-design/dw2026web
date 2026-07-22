@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>桌卡修改系統 v3.6 - 編輯桌卡</title>
+    <title>桌卡修改系統 v3.7精簡版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -429,17 +429,59 @@
             background: rgba(201, 160, 61, 0.05);
         }
 
+        /* 桌卡內容區域內的清空按鈕 */
+        .card-section-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .card-section-actions .btn-clear-inline {
+            background: none;
+            border: 1px solid #e0d3c6;
+            color: #b0a090;
+            padding: 5px 14px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.65rem;
+            font-weight: 600;
+            font-family: inherit;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .card-section-actions .btn-clear-inline:hover {
+            border-color: #e74c3c;
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.05);
+        }
+        .card-section-actions .btn-add-card-inline {
+            flex: 1;
+            background: none;
+            border: 2px dashed #dac29c;
+            color: #8b6946;
+            padding: 5px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 600;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        .card-section-actions .btn-add-card-inline:hover {
+            border-color: #c9a03d;
+            background: rgba(201, 160, 61, 0.05);
+        }
+
         /* ====================================================================
-           預覽 - 手機縮小版
+           預覽 - 外框縮小，內容維持可辨識
            ==================================================================== */
         .preview-area {
             background: #f5ede2;
             border-radius: 14px;
-            padding: 10px 8px;
+            padding: 8px 6px;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 160px;
+            min-height: 140px;
             border: 2px dashed #dac29c;
             overflow: hidden;
         }
@@ -454,28 +496,25 @@
             transition: all 0.2s;
         }
         .preview-frame.small {
-            width: 130mm;
-            height: 140mm;
+            width: 90mm;
+            height: 97mm;
         }
         .preview-frame.large {
-            width: 148mm;
-            height: 210mm;
+            width: 102mm;
+            height: 145mm;
         }
         .preview-wrapper {
-            transform: scale(0.22);
+            transform: scale(0.45);
             transform-origin: center center;
         }
-        @media (min-width: 380px) {
-            .preview-wrapper { transform: scale(0.28); }
+        @media (min-width: 400px) {
+            .preview-wrapper { transform: scale(0.55); }
         }
-        @media (min-width: 420px) {
-            .preview-wrapper { transform: scale(0.32); }
+        @media (min-width: 480px) {
+            .preview-wrapper { transform: scale(0.65); }
         }
-        @media (min-width: 500px) {
-            .preview-wrapper { transform: scale(0.40); }
-        }
-        @media (min-width: 620px) {
-            .preview-wrapper { transform: scale(0.50); }
+        @media (min-width: 600px) {
+            .preview-wrapper { transform: scale(0.80); }
         }
 
         .preview-half {
@@ -501,7 +540,7 @@
 
         .fold-line {
             text-align: center;
-            font-size: 7px;
+            font-size: 6px;
             color: #bbb;
             letter-spacing: 2px;
             padding: 1px 0;
@@ -516,7 +555,7 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
-            margin-top: 6px;
+            margin-top: 4px;
         }
         .preview-nav button {
             background: #dac29c;
@@ -547,27 +586,21 @@
         }
 
         /* ====================================================================
-           按鈕區域 - 精簡
+           按鈕區域 - 只剩 PDF 按鈕
            ==================================================================== */
         .btn-group {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 8px;
             margin-top: 8px;
         }
-        .btn-group .btn {
-            width: 100%;
-        }
-        .btn-group .btn-pdf {
-            grid-column: span 2;
-        }
 
         .btn {
-            padding: 10px 16px;
+            padding: 12px 16px;
             border: none;
             border-radius: 60px;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
@@ -580,24 +613,6 @@
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #c9a03d, #b8872a);
-            color: white;
-            box-shadow: 0 4px 12px rgba(201, 160, 61, 0.3);
-        }
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(201, 160, 61, 0.35);
-        }
-
-        .btn-secondary {
-            background: #8f755c;
-            color: white;
-        }
-        .btn-secondary:hover:not(:disabled) {
-            background: #a0856a;
         }
 
         .btn-pdf {
@@ -756,38 +771,47 @@
                 font-size: 0.7rem;
                 padding: 6px 12px;
             }
-            .btn-group {
-                grid-template-columns: 1fr 1fr;
-                gap: 6px;
-            }
-            .btn-group .btn-pdf {
-                grid-column: span 2;
-            }
             .btn {
-                font-size: 0.75rem;
-                padding: 8px 12px;
+                font-size: 0.85rem;
+                padding: 10px 12px;
             }
             .preview-wrapper {
-                transform: scale(0.18);
+                transform: scale(0.38);
             }
             .preview-area {
-                min-height: 130px;
+                min-height: 120px;
                 padding: 6px 4px;
+            }
+            .preview-frame.small {
+                width: 75mm;
+                height: 81mm;
+            }
+            .preview-frame.large {
+                width: 85mm;
+                height: 120mm;
             }
         }
 
         @media (max-width: 340px) {
-            .btn-group {
-                grid-template-columns: 1fr;
-            }
-            .btn-group .btn-pdf {
-                grid-column: span 1;
-            }
             .preview-wrapper {
-                transform: scale(0.15);
+                transform: scale(0.30);
             }
             .preview-area {
-                min-height: 110px;
+                min-height: 100px;
+            }
+            .preview-frame.small {
+                width: 65mm;
+                height: 70mm;
+            }
+            .preview-frame.large {
+                width: 75mm;
+                height: 105mm;
+            }
+            .card-section-actions {
+                flex-wrap: wrap;
+            }
+            .card-section-actions .btn-add-card-inline {
+                min-width: 100%;
             }
         }
     </style>
@@ -796,7 +820,7 @@
 
 <div class="container">
     <div class="header">
-        <h1>📋 桌卡修改系統 <span class="badge">v3.6</span></h1>
+        <h1>📋 桌卡修改系統 <span class="badge">v3.7精簡版</span></h1>
     </div>
 
     <!-- ====================================================================
@@ -886,7 +910,7 @@
     </div>
 
     <!-- ====================================================================
-         桌卡列表
+         桌卡內容（內含清空按鈕）
          ==================================================================== -->
     <div class="section">
         <div class="section-title">
@@ -897,11 +921,14 @@
         <div id="cardsContainer">
             <!-- 由 JavaScript 動態產生 -->
         </div>
-        <button class="btn-add-card" onclick="addCard()">＋ 新增卡片</button>
+        <div class="card-section-actions">
+            <button class="btn-add-card-inline" onclick="addCard()">＋ 新增卡片</button>
+            <button class="btn-clear-inline" onclick="clearAll()">🗑️ 清空</button>
+        </div>
     </div>
 
     <!-- ====================================================================
-         預覽 - 手機縮小版
+         預覽 - 外框縮小版
          ==================================================================== -->
     <div class="section">
         <div class="section-title">👁️ 預覽</div>
@@ -926,10 +953,9 @@
     </div>
 
     <!-- ====================================================================
-         按鈕
+         按鈕 - 只剩 PDF
          ==================================================================== -->
     <div class="btn-group">
-        <button class="btn btn-secondary" onclick="clearAll()">🗑️ 清空</button>
         <button class="btn btn-pdf" id="pdfBtn" onclick="generatePDFOnPhone()">📄 轉存 PDF</button>
     </div>
 
@@ -1497,11 +1523,11 @@
     }
 
     // ========================================================================
-    //  清空全部
+    //  清空全部（含確認提醒）
     // ========================================================================
 
     function clearAll() {
-        if (!confirm('確定要清空所有內容嗎？')) return;
+        if (!confirm('確定要清空所有卡片內容嗎？\n此動作無法復原！')) return;
         cards.forEach(card => {
             card.fields.forEach(f => {
                 f.text = '';
@@ -1513,7 +1539,7 @@
         document.getElementById('dateInput').value = '';
         document.getElementById('venueInput').value = '';
         updateVenueDisplay();
-        showToast('🗑️ 已清空');
+        showToast('🗑️ 已清空全部內容');
     }
 
     // ========================================================================
@@ -1562,7 +1588,7 @@
 
         document.getElementById('dateInput').focus();
 
-        console.log('✅ 桌卡修改系統 v3.6 - 手機精簡版載入完成');
+        console.log('✅ 桌卡修改系統 v3.7 - 手機精簡版載入完成');
         console.log('📌 功能：Excel 匯入、大小桌卡選擇、前端產生 PDF');
     });
 </script>
