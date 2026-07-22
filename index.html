@@ -1,396 +1,1776 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>越越  未應答宣告 電話轉接SOP v1.2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>桌卡修改系統 v3.6 - 編輯桌卡</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- 🔥 html2canvas 用於將 HTML 轉為圖片（保留中文） -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- 🔥 jsPDF 用於產生 PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- SheetJS 用於讀取 Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* ====================================================================
+           全域樣式
+           ==================================================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background: linear-gradient(145deg, #0b3b2c 0%, #1a5e4a 45%, #2a7a5f 100%);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: 'Noto Sans TC', '微軟正黑體', sans-serif;
+            background: #7a5b47;
+            padding: 12px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            max-width: 540px;
+            width: 100%;
+            background: #fffef7;
+            border-radius: 32px;
+            padding: 20px 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            margin: 10px auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            color: #998671;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .badge {
+            font-size: 0.6rem;
+            background: #c9a03d;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 40px;
+            font-weight: 700;
+        }
+
+        .section {
+            background: #fdf9f0;
+            padding: 14px 16px;
+            border-radius: 20px;
+            margin-bottom: 14px;
+            border: 1px solid #f0e2ce;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #8b6946;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title .required {
+            color: #e74c3c;
+            font-size: 0.7rem;
+        }
+        .section-title .badge-new {
+            background: #c9a03d;
+            color: white;
+            font-size: 0.55rem;
+            padding: 1px 10px;
+            border-radius: 40px;
+            font-weight: 700;
+        }
+
+        /* ====================================================================
+           日期廳房
+           ==================================================================== */
+        .venue-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .venue-row .field-group {
+            flex: 1;
+            min-width: 100px;
+        }
+        .venue-row .field-group label {
+            display: block;
+            font-size: 0.7rem;
+            color: #8b6946;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .venue-row .field-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 40px;
+            border: 2px solid #dac29c;
+            font-size: 1rem;
+            background: white;
+            font-weight: 500;
+        }
+        .venue-row .field-group input:focus {
+            outline: none;
+            border-color: #c9a03d;
+            box-shadow: 0 0 0 3px rgba(201, 160, 61, 0.15);
+        }
+        .venue-row .field-group input.date-input {
+            max-width: 120px;
+        }
+        .venue-display {
+            font-size: 0.75rem;
+            color: #b67b2e;
+            background: #f5ede2;
+            padding: 4px 14px;
+            border-radius: 40px;
+            display: inline-block;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        /* ====================================================================
+           紙張尺寸
+           ==================================================================== */
+        .paper-row {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .paper-row .paper-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: 2px solid #dac29c;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .paper-row .paper-option:hover {
+            border-color: #c9a03d;
+        }
+        .paper-row .paper-option.active {
+            border-color: #c9a03d;
+            background: #f5ede2;
+        }
+        .paper-row .paper-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #c9a03d;
+            cursor: pointer;
+        }
+        .paper-row .paper-option label {
+            font-weight: 600;
+            color: #8b6946;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .paper-row .paper-option .size-desc {
+            font-size: 0.65rem;
+            color: #b0a090;
+            font-weight: 400;
+        }
+
+        /* ====================================================================
+           Excel 匯入
+           ==================================================================== */
+        .excel-import-area {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .excel-import-area input[type="file"] {
+            flex: 1;
+            min-width: 140px;
+            padding: 10px 14px;
+            border-radius: 40px;
+            border: 2px solid #dac29c;
+            background: white;
+            font-size: 0.8rem;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .excel-import-area input[type="file"]::file-selector-button {
+            padding: 4px 14px;
+            border-radius: 40px;
+            border: none;
+            background: #dac29c;
+            color: #5a4030;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+            margin-right: 8px;
+        }
+        .excel-import-area input[type="file"]::file-selector-button:hover {
+            background: #c9a03d;
+            color: white;
+        }
+        .excel-import-area .btn-import {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 40px;
+            background: #8aaa9a;
+            color: white;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-family: inherit;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+        .excel-import-area .btn-import:hover {
+            background: #6a8a7a;
+        }
+        .excel-import-area .btn-import:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .excel-import-info {
+            font-size: 0.7rem;
+            color: #b0a090;
+            margin-top: 6px;
+            width: 100%;
+        }
+        .excel-import-info .highlight {
+            color: #8b6946;
+            font-weight: 600;
+        }
+
+        /* ====================================================================
+           文字樣式
+           ==================================================================== */
+        .style-row {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .style-row .style-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .style-row .style-item label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #8b6946;
+            white-space: nowrap;
+        }
+        .style-row .style-item input[type="color"] {
+            width: 40px;
+            height: 40px;
+            padding: 3px;
+            border-radius: 40px;
+            border: 1px solid #dac29c;
+            cursor: pointer;
+            background: white;
+        }
+        .style-row .style-item select {
+            padding: 8px 12px;
+            border-radius: 40px;
+            border: 1px solid #dac29c;
+            font-size: 0.85rem;
+            background: white;
+            cursor: pointer;
+            height: 40px;
+        }
+
+        /* ====================================================================
+           卡片列表
+           ==================================================================== */
+        .card-item {
+            background: white;
+            border-radius: 16px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            border: 1px solid #e8ddd0;
+            position: relative;
+            transition: border-color 0.2s;
+        }
+        .card-item:hover {
+            border-color: #dac29c;
+        }
+        .card-item .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .card-item .card-header .card-num {
+            font-weight: 700;
+            color: #b67b2e;
+            font-size: 0.8rem;
+        }
+        .card-item .card-header .card-source {
+            font-size: 0.6rem;
+            color: #8aaa9a;
+            background: #e8f5e9;
+            padding: 1px 10px;
+            border-radius: 40px;
+            font-weight: 600;
+        }
+        .card-item .card-header .btn-remove-card {
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+        .card-item .card-header .btn-remove-card:hover {
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.08);
+        }
+
+        .card-item .field-row {
+            display: grid;
+            grid-template-columns: 28px 1fr 60px 28px;
+            gap: 4px;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        .card-item .field-row .field-label {
+            font-weight: 700;
+            color: #b67b2e;
+            font-size: 0.7rem;
+            text-align: center;
+        }
+        .card-item .field-row input[type="text"] {
+            padding: 6px 10px;
+            border-radius: 40px;
+            border: 1px solid #dac29c;
+            font-size: 0.85rem;
+            width: 100%;
+            background: #fcf9f4;
+            font-family: inherit;
+        }
+        .card-item .field-row input[type="text"]:focus {
+            outline: none;
+            border-color: #c9a03d;
+            box-shadow: 0 0 0 3px rgba(201, 160, 61, 0.1);
+        }
+        .card-item .field-row select {
+            padding: 4px 4px;
+            border-radius: 40px;
+            border: 1px solid #dac29c;
+            font-size: 0.65rem;
+            background: white;
+            cursor: pointer;
+            width: 100%;
+        }
+        .card-item .field-row .btn-del-field {
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 0.8rem;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 20px;
+            transition: 0.2s;
+            line-height: 1;
+        }
+        .card-item .field-row .btn-del-field:hover {
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .btn-add-field {
+            background: none;
+            border: 1px dashed #dac29c;
+            color: #8b6946;
+            padding: 4px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 4px;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .btn-add-field:hover {
+            border-color: #c9a03d;
+            background: rgba(201, 160, 61, 0.05);
+        }
+
+        .btn-add-card {
+            background: none;
+            border: 2px dashed #dac29c;
+            color: #8b6946;
+            padding: 10px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 4px;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .btn-add-card:hover {
+            border-color: #c9a03d;
+            background: rgba(201, 160, 61, 0.05);
+        }
+
+        /* ====================================================================
+           預覽
+           ==================================================================== */
+        .preview-area {
+            background: #f5ede2;
+            border-radius: 16px;
+            padding: 16px 12px;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 2rem 1.5rem;
-            margin: 0;
+            min-height: 260px;
+            border: 2px dashed #dac29c;
+            overflow: hidden;
         }
-        .card {
-            max-width: 760px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(2px);
-            border-radius: 40px;
-            box-shadow: 0 20px 40px rgba(0, 20, 10, 0.6), 0 0 0 4px #ffffff88, 0 0 0 8px #2a7a5f66;
-            padding: 2.2rem 2.5rem;
-            border: 4px solid #ffffff;
-            transition: 0.1s;
-        }
-        @media (max-width: 550px) {
-            .card {
-                padding: 1.5rem 1.2rem;
-                border-width: 3px;
-                max-width: 100%;
-            }
-        }
-        h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 1.8rem;
-            letter-spacing: -0.3px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-        }
-        .section-block {
-            background: #e7f5ea;
-            border: 4px solid #ffffff;
-            border-radius: 24px;
-            padding: 1.2rem 1.8rem;
-            margin-bottom: 1.8rem;
-            box-shadow: 0 4px 12px rgba(0, 20, 0, 0.2), inset 0 1px 4px rgba(255,255,255,0.8);
-            transition: 0.1s;
-        }
-        .section-block:last-of-type {
-            margin-bottom: 1.8rem;
-        }
-        .section-header {
+
+        .preview-frame {
+            background: white;
             display: flex;
-            align-items: baseline;
-            flex-wrap: nowrap;
-            column-gap: 0.4rem;
-            row-gap: 0;
-            margin-bottom: 0.6rem;
-            white-space: nowrap;
-            overflow: visible;
+            flex-direction: column;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+            border: 1px solid #ddd;
+            transition: all 0.2s;
         }
-        .section-header h2 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            display: inline;
-            margin: 0;
-            line-height: 1.3;
-            flex-shrink: 0;
+        .preview-frame.small {
+            width: 130mm;
+            height: 140mm;
         }
-        .section-header .phone-number {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #0055b3;
-            letter-spacing: 0.3px;
+        .preview-frame.large {
+            width: 148mm;
+            height: 210mm;
+        }
+        .preview-wrapper {
+            transform: scale(0.35);
+            transform-origin: center center;
+        }
+        @media (min-width: 400px) {
+            .preview-wrapper { transform: scale(0.45); }
+        }
+        @media (min-width: 500px) {
+            .preview-wrapper { transform: scale(0.55); }
+        }
+        @media (min-width: 620px) {
+            .preview-wrapper { transform: scale(0.7); }
+        }
+        @media (min-width: 768px) {
+            .preview-wrapper { transform: scale(0.85); }
+        }
+
+        .preview-half {
+            width: 100%;
+            height: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 8px;
+        }
+        .preview-half.top {
+            transform: rotate(180deg);
+        }
+        .preview-content {
+            text-align: center;
+            width: 100%;
+        }
+        .preview-line {
+            word-break: break-word;
             line-height: 1.2;
+            margin: 1px 0;
+        }
+
+        .fold-line {
+            text-align: center;
+            font-size: 8px;
+            color: #bbb;
+            letter-spacing: 2px;
+            padding: 1px 0;
+            border-top: 1px dashed #ddd;
+            border-bottom: 1px dashed #ddd;
+            background: #f9f9f9;
             flex-shrink: 0;
-            margin-left: 0.1rem;
-        }
-        .section-header .phone-number.green {
-            color: #0055b3;
-        }
-        .change-block .section-header {
-            flex-wrap: nowrap;
-            gap: 0.2rem;
-            overflow: visible;
-        }
-        .change-block .section-header h2 {
-            font-size: 1.1rem;
-        }
-        .change-block .section-header .phone-number {
-            font-size: 1.5rem;
         }
 
-        .step-list {
-            list-style: none;
-            padding-left: 0;
-            margin: 0.2rem 0 0 0;
+        .preview-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 10px;
         }
-        .step-list li {
-            padding: 0.2rem 0 0.2rem 1.8rem;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%231a6d46" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>') left center no-repeat;
-            background-size: 1.2rem;
-            color: #1a1a1a;
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-        .step-list li strong {
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-        .inline-code {
-            background: #d4eee0;
-            padding: 0.2rem 1rem;
-            border-radius: 30px;
-            font-family: 'SF Mono', 'Menlo', monospace;
-            font-weight: 700;
-            font-size: 1.3rem;
-            color: #cc3b3b;
-            border: 2px solid #b3d5bf;
-            white-space: nowrap;
-            box-shadow: 0 2px 6px rgba(180, 40, 40, 0.15);
-            display: inline-block;
-            line-height: 1.4;
-            letter-spacing: 0.5px;
-        }
-
-        .divider-light {
+        .preview-nav button {
+            background: #dac29c;
             border: none;
-            border-top: 2px dashed #9ac0ab;
-            margin: 1.8rem 0 1.8rem 0;
-        }
-        .change-block {
-            background: #e7f5ea;
-            border: 4px solid #ffffff;
-            border-radius: 24px;
-            padding: 1.2rem 1.8rem;
-            margin: 1.8rem 0 0.5rem 0;
-            box-shadow: 0 4px 12px rgba(0, 20, 0, 0.2), inset 0 1px 4px rgba(255,255,255,0.8);
-        }
-        .change-block .section-header {
-            margin-bottom: 0.3rem;
-        }
-        .meta-grid {
-            margin-top: 0.6rem;
-            background: #d6eee0;
-            border-radius: 18px;
-            padding: 0.8rem 1.4rem;
-            border: 1px solid #b3d5bf;
-        }
-        .meta-grid p {
-            padding: 0.15rem 0;
-            color: #1a1a1a;
+            color: #5a4030;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             font-size: 1rem;
-            line-height: 1.5;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.2s;
         }
-        .meta-grid strong {
-            color: #1a1a1a;
+        .preview-nav button:hover {
+            background: #c9a03d;
+            color: white;
+        }
+        .preview-nav button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .preview-nav .preview-index {
+            color: #8b6946;
+            font-size: 0.8rem;
             font-weight: 600;
-        }
-        .meta-grid .inline-code {
-            background: #c5e4d4;
-            border-color: #9ac0ab;
-            color: #cc3b3b;
-            font-size: 1.3rem;
-            border: 2px solid #b3d5bf;
+            min-width: 60px;
+            text-align: center;
         }
 
-        .step-list li .inline-code {
-            font-size: 1.35rem;
-            padding: 0.15rem 1.1rem;
-            background: #d4eee0;
-            border: 2px solid #b3d5bf;
-            color: #cc3b3b;
-            box-shadow: 0 2px 8px rgba(180, 40, 40, 0.2);
+        /* ====================================================================
+           按鈕區域
+           ==================================================================== */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            font-family: inherit;
         }
-        .meta-grid .inline-code {
-            font-size: 1.3rem;
-            padding: 0.15rem 1.1rem;
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        @media (max-width: 520px) {
-            .section-header {
-                flex-wrap: wrap;
-                white-space: normal;
-                overflow: visible;
+        .btn-primary {
+            background: linear-gradient(135deg, #c9a03d, #b8872a);
+            color: white;
+            box-shadow: 0 4px 12px rgba(201, 160, 61, 0.3);
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(201, 160, 61, 0.35);
+        }
+
+        .btn-secondary {
+            background: #8f755c;
+            color: white;
+        }
+        .btn-secondary:hover:not(:disabled) {
+            background: #a0856a;
+        }
+
+        .btn-pdf {
+            background: #6a8a7a;
+            color: white;
+        }
+        .btn-pdf:hover:not(:disabled) {
+            background: #5a7a6a;
+            transform: translateY(-1px);
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .btn-group .btn {
+            width: 100%;
+        }
+        .btn-group .btn-pdf {
+            grid-column: span 2;
+        }
+
+        /* ====================================================================
+           結果顯示
+           ==================================================================== */
+        .result-box {
+            background: #e8f5e9;
+            border-radius: 20px;
+            padding: 18px;
+            border: 2px solid #4caf50;
+            display: none;
+            margin-top: 14px;
+        }
+        .result-box.show {
+            display: block;
+        }
+
+        .result-box .result-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+        .result-box .result-detail {
+            margin-top: 6px;
+            font-size: 0.85rem;
+            color: #333;
+        }
+
+        /* ====================================================================
+           Toast
+           ==================================================================== */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: #ffd966;
+            padding: 14px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            z-index: 999;
+            animation: fadeInUp 0.3s ease;
+            border: 1px solid #ffd966;
+            max-width: 90%;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(16px);
             }
-            .change-block .section-header {
-                flex-wrap: wrap;
-                white-space: normal;
-                overflow: visible;
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
             }
-            .change-block .section-header h2 {
-                font-size: 1.0rem;
+        }
+
+        /* ====================================================================
+           進度遮罩
+           ==================================================================== */
+        .progress-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .progress-overlay.active {
+            display: flex;
+        }
+
+        .progress-card {
+            background: #1a2538;
+            padding: 32px;
+            border-radius: 28px;
+            text-align: center;
+            border: 2px solid #ffd966;
+            max-width: 300px;
+            width: 90%;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #3b4a62;
+            border-top-color: #ffd966;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .progress-card p {
+            color: #e2e8f0;
+            font-size: 0.9rem;
+        }
+
+        /* ====================================================================
+           PDF 產生進度遮罩
+           ==================================================================== */
+        .pdf-progress-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1001;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .pdf-progress-overlay.active {
+            display: flex;
+        }
+
+        .pdf-progress-card {
+            background: #1a2538;
+            padding: 40px 32px;
+            border-radius: 28px;
+            text-align: center;
+            border: 2px solid #ffd966;
+            max-width: 340px;
+            width: 90%;
+        }
+        .pdf-progress-card .icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 12px;
+        }
+        .pdf-progress-card .title {
+            color: #ffd966;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .pdf-progress-card .sub {
+            color: #b0c0d0;
+            font-size: 0.9rem;
+            margin-top: 6px;
+        }
+        .pdf-progress-card .bar-track {
+            margin-top: 16px;
+            background: #3b4a62;
+            border-radius: 40px;
+            height: 8px;
+            overflow: hidden;
+        }
+        .pdf-progress-card .bar-track .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #c9a03d, #ffd966);
+            border-radius: 40px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        .pdf-progress-card .count {
+            color: #8899aa;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        /* ====================================================================
+           手機優化
+           ==================================================================== */
+        @media (max-width: 400px) {
+            .container {
+                padding: 14px 12px;
+                border-radius: 24px;
             }
-            .change-block .section-header .phone-number {
-                font-size: 1.3rem;
-            }
-            .section-header h2 {
+            h1 {
                 font-size: 1.2rem;
             }
-            .section-header .phone-number {
-                font-size: 1.5rem;
+            .section {
+                padding: 12px 12px;
+            }
+            .venue-row .field-group input {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+            }
+            .card-item .field-row {
+                grid-template-columns: 24px 1fr 52px 24px;
+                gap: 3px;
+            }
+            .card-item .field-row input[type="text"] {
+                font-size: 0.75rem;
+                padding: 5px 8px;
+            }
+            .card-item .field-row select {
+                font-size: 0.6rem;
+            }
+            .style-row .style-item select {
+                font-size: 0.7rem;
+                padding: 6px 8px;
+                height: 34px;
+            }
+            .paper-row .paper-option {
+                padding: 6px 12px;
+            }
+            .paper-row .paper-option label {
+                font-size: 0.75rem;
+            }
+            .paper-row .paper-option .size-desc {
+                font-size: 0.55rem;
+            }
+            .excel-import-area input[type="file"] {
+                font-size: 0.7rem;
+                padding: 6px 10px;
+            }
+            .excel-import-area .btn-import {
+                font-size: 0.75rem;
+                padding: 8px 14px;
+            }
+            .btn-group {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .btn-group .btn-pdf {
+                grid-column: span 2;
+            }
+            .btn {
+                font-size: 0.85rem;
+                padding: 10px 16px;
             }
         }
 
-        /* ============================================================
-                   PDF 列印樣式 — 明確指定所有文字顏色
-                   ============================================================ */
-        @media print {
-            /* 頁面背景：淺色底，讓卡片有層次 */
-            body {
-                background: #dce8e0 !important;
-                padding: 0.3in;
-                display: block;
+        @media (max-width: 360px) {
+            .btn-group {
+                grid-template-columns: 1fr;
             }
-
-            /* 最外層卡片：白底 + 深綠邊框 + 陰影 */
-            .card {
-                max-width: 100%;
-                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18) !important;
-                border: 4px solid #1a5e4a !important;
-                background: #ffffff !important;
-                backdrop-filter: none !important;
-                border-radius: 28px;
-                padding: 2rem 2.2rem;
+            .btn-group .btn-pdf {
+                grid-column: span 1;
             }
-
-            /* 所有一般文字 → 黑色 */
-            .card,
-            .card * {
-                color: #1a1a1a !important;
-            }
-
-            /* 標題黑色 */
-            h1,
-            .card h1 {
-                color: #1a1a1a !important;
-            }
-            .section-header h2,
-            .change-block .section-header h2 {
-                color: #1a1a1a !important;
-            }
-            .step-list li,
-            .step-list li strong,
-            .meta-grid p,
-            .meta-grid strong {
-                color: #1a1a1a !important;
-            }
-
-            /* ----- 電話號碼 → 藍色 (不受一般文字黑色覆蓋) ----- */
-            .phone-number,
-            .phone-number.green,
-            .section-header .phone-number,
-            .section-header .phone-number.green,
-            .change-block .phone-number,
-            .change-block .phone-number.green {
-                color: #0055b3 !important;
-            }
-
-            /* ----- 重點代碼 (*77# / #77#) → 紅色 ----- */
-            .inline-code,
-            .step-list li .inline-code,
-            .meta-grid .inline-code {
-                color: #cc3b3b !important;
-                border: 2px solid #2b7a5a !important;
-                background: #d4eee0 !important;
-            }
-
-            /* 區塊樣式 */
-            .section-block,
-            .change-block {
-                border: 3px solid #1a5e4a !important;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
-                background: #eef9f0 !important;
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
-
-            .meta-grid {
-                background: #e2f0e6 !important;
-                border: 1px solid #2b7a5a !important;
-            }
-
-            .divider-light {
-                border-top-color: #2b7a5a !important;
-            }
-
-            /* 強制標題與號碼同一行 */
-            .section-header {
-                flex-wrap: nowrap !important;
-                white-space: nowrap !important;
-                overflow: visible !important;
-            }
-            .change-block .section-header {
-                flex-wrap: nowrap !important;
-                white-space: nowrap !important;
-                overflow: visible !important;
-            }
-            .change-block .section-header h2 {
-                font-size: 1.1rem !important;
-            }
-            .change-block .section-header .phone-number {
-                font-size: 1.5rem !important;
-            }
-
-            /* 空的 footnote 隱藏 */
-            .footnote:empty {
-                display: none !important;
-            }
-
-            /* 確保清單項目符號顏色正確 */
-            .step-list li {
-                background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%231a6d46" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>') left center no-repeat !important;
-                background-size: 1.2rem !important;
-            }
-        }
-
-        .footnote:empty {
-            display: none;
-        }
-        .footnote {
-            margin-top: 1.2rem;
-            font-size: 0.9rem;
-            color: #d4ece0;
-            border-top: 1px solid rgba(180, 210, 180, 0.4);
-            padding-top: 1rem;
-            text-align: right;
-            text-shadow: 0 1px 2px rgba(0, 20, 0, 0.3);
         }
     </style>
 </head>
 <body>
-<div class="card">
-    <h1>📞 越越 未應答轉接-電話轉接SOP <span style="font-size: 0.8rem; font-weight: 400; color: #1a5e4a; margin-left: 0.5rem;">v1.0</span></h1>
 
-    <!-- 轉接 區塊 -->
-    <div class="section-block">
-        <div class="section-header">
-            <h2>✨啟用未應答轉接：(目前已經設定好，無須每日操作)</h2>
-            <span class="phone-number green"></span>
-        </div>
-        <ol class="step-list" style="list-style-type: decimal; padding-left: 0.3rem;">
-            <li style="background: none; padding-left: 0.1rem; margin-bottom: 0.1rem;">
-                櫃台電話操作輸入 <span class="inline-code">*75#</span> 聽到「嘟嘟聲」即可掛斷完成轉接。
-            </li>
-            <li style="background: none; padding-left: 0.1rem; margin-top: 0.05rem;">
-                使用自己手機撥打餐廳電話 <span class="inline-code">02-8502-6600</span>，五響後聽到語音聲音即可掛斷，確認已轉接成功。
-            </li>
-        </ol>
+<div class="container">
+    <div class="header">
+        <h1>📋 桌卡修改系統 <span class="badge">v3.6</span></h1>
     </div>
 
-    <!-- 取消轉接 區塊 -->
-    <div class="section-block">
-        <div class="section-header">
-            <h2>✨如果要取消轉接：(有需要取消才操作)</h2>
-            <span class="phone-number"></span>
+    <!-- ====================================================================
+         日期廳房
+         ==================================================================== -->
+    <div class="section">
+        <div class="section-title">
+            🏷️ 日期廳房
+            <span class="required">*必填</span>
         </div>
-        <ol class="step-list" style="list-style-type: decimal; padding-left: 0.3rem;">
-            <li style="background: none; padding-left: 0.1rem; margin-bottom: 0.1rem;">
-                公司電話輸入 <span class="inline-code">#75#</span> 聽到「嘟嘟聲」即可掛斷完成取消轉接。
-            </li>
-            <li style="background: none; padding-left: 0.2rem; margin-top: 0.05rem;">
-                使用自己手機撥打餐廳電話 <span class="inline-code">02-8502-6600</span>，聽不到語音，餐廳電話響超過五聲即可掛斷，確認已成功關閉轉接。
-            </li>
-        </ol>
+        <div class="venue-row">
+            <div class="field-group">
+                <label>📅 日期 (MMDD)</label>
+                <input type="text" id="dateInput" class="date-input" placeholder="mmdd" maxlength="4" inputmode="numeric">
+            </div>
+            <div class="field-group">
+                <label>🏠 廳房名稱</label>
+                <input type="text" id="venueInput" placeholder="xx廳" maxlength="20">
+            </div>
+        </div>
+        <div class="venue-display" id="venueDisplay">合併顯示：mmdd-xx廳</div>
     </div>
 
-    <hr class="divider-light">
-
-    <!-- 2026/05/29 變更 區塊 -->
-    <div class="change-block">
-        <div class="section-header">
-            <h2>📌 2026/05/29 起下班轉接號碼變更為：</h2>
-            <span class="phone-number green">7753-8570</span>
+    <!-- ====================================================================
+         紙張尺寸
+         ==================================================================== -->
+    <div class="section">
+        <div class="section-title">
+            📐 紙張尺寸
+            <span class="badge-new">NEW</span>
         </div>
-        <div class="meta-grid">
-            <p><strong>轉接類型：</strong>未定答轉接</p>
-            <p><strong>起始設定方式：</strong><span class="inline-code">*75轉接號碼#</span>（號碼更換才需要設定）</p>
-            <p><strong>取消方式：</strong><span class="inline-code">#75#</span></p>
+        <div class="paper-row" id="paperSizeRow">
+            <div class="paper-option active" data-value="small">
+                <input type="radio" name="paperSize" value="small" id="paperSmall" checked>
+                <label for="paperSmall">🔖 小桌卡 <span class="size-desc">(130×140mm)</span></label>
+            </div>
+            <div class="paper-option" data-value="large">
+                <input type="radio" name="paperSize" value="large" id="paperLarge">
+                <label for="paperLarge">🏷️ 大桌卡 <span class="size-desc">(148×210mm)</span></label>
+            </div>
+        </div>
+        <div style="font-size:0.7rem;color:#b0a090;margin-top:6px;">
+            ⚠️ 列印時皆以 A4 紙張左上角為基準，請依實際需求選擇尺寸
         </div>
     </div>
 
-    <div class="footnote"></div>
+    <!-- ====================================================================
+         Excel 匯入
+         ==================================================================== -->
+    <div class="section">
+        <div class="section-title">
+            📂 匯入 Excel
+            <span class="badge-new">NEW</span>
+        </div>
+        <div class="excel-import-area">
+            <input type="file" id="excelFile" accept=".xlsx,.xls,.csv">
+            <button class="btn-import" id="importBtn" onclick="importExcel()">📥 匯入產生卡片</button>
+        </div>
+        <div class="excel-import-info">
+            💡 支援 <span class="highlight">.xlsx / .xls / .csv</span>，每列產生一張桌卡（最多 6 欄）
+            <br>匯入後仍可<span class="highlight">逐張手動編輯</span>文字與字體大小
+        </div>
+    </div>
+
+    <!-- ====================================================================
+         文字樣式
+         ==================================================================== -->
+    <div class="section">
+        <div class="section-title">🎨 文字樣式</div>
+        <div class="style-row">
+            <div class="style-item">
+                <label>顏色</label>
+                <input type="color" id="textColor" value="#404040">
+            </div>
+            <div class="style-item">
+                <label>粗細</label>
+                <select id="fontWeight">
+                    <option value="400">400 (正常)</option>
+                    <option value="500" selected>500 (中黑)</option>
+                    <option value="600">600 (黑)</option>
+                    <option value="700">700 (標準)</option>
+                    <option value="800">800 (特厚)</option>
+                    <option value="900">900 (極厚)</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================================
+         桌卡列表
+         ==================================================================== -->
+    <div class="section">
+        <div class="section-title">
+            ✏️ 桌卡內容
+            <span class="required">*至少 1 張</span>
+            <span style="font-size:0.7rem;color:#8899a6;margin-left:auto;" id="cardCount">共 0 張</span>
+        </div>
+        <div id="cardsContainer">
+            <!-- 由 JavaScript 動態產生 -->
+        </div>
+        <button class="btn-add-card" onclick="addCard()">＋ 新增卡片</button>
+    </div>
+
+    <!-- ====================================================================
+         預覽
+         ==================================================================== -->
+    <div class="section">
+        <div class="section-title">👁️ 預覽</div>
+        <div class="preview-area" id="previewArea">
+            <div class="preview-wrapper">
+                <div class="preview-frame small" id="previewFrame">
+                    <div class="preview-half top" id="previewTop">
+                        <div class="preview-content" id="previewContentTop"></div>
+                    </div>
+                    <div class="fold-line">▲ 對折線 ▲</div>
+                    <div class="preview-half" id="previewBottom">
+                        <div class="preview-content" id="previewContentBottom"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="preview-nav">
+            <button id="prevPreview" onclick="prevPreview()">◀</button>
+            <span class="preview-index" id="previewIndex">1 / 1</span>
+            <button id="nextPreview" onclick="nextPreview()">▶</button>
+        </div>
+    </div>
+
+    <!-- ====================================================================
+         按鈕
+         ==================================================================== -->
+    <div class="btn-group">
+        <button class="btn btn-primary" id="createBtn" onclick="createDocument()">📦 建立文件</button>
+        <button class="btn btn-secondary" onclick="clearAll()">🗑️ 清空</button>
+        <button class="btn btn-pdf" id="pdfBtn" onclick="generatePDFOnPhone()">📄 轉存 PDF</button>
+    </div>
+
+    <!-- ====================================================================
+         結果顯示
+         ==================================================================== -->
+    <div class="result-box" id="resultBox">
+        <div class="result-title" id="resultTitle">✅ 文件已建立</div>
+        <div class="result-detail" id="resultDetail">mmdd-xx廳（共 3 張）</div>
+        <div class="btn-group" style="margin-top:12px;">
+            <button class="btn btn-secondary" onclick="continueEditing()" style="font-size:0.85rem;">🔄 繼續建立下一份</button>
+        </div>
+    </div>
+
 </div>
+
+<!-- ====================================================================
+     進度遮罩
+     ==================================================================== -->
+<div class="progress-overlay" id="progressOverlay">
+    <div class="progress-card">
+        <div class="spinner"></div>
+        <p id="progressText">儲存中...</p>
+    </div>
+</div>
+
+<!-- ====================================================================
+     PDF 產生進度遮罩
+     ==================================================================== -->
+<div class="pdf-progress-overlay" id="pdfProgressOverlay">
+    <div class="pdf-progress-card">
+        <span class="icon">📄</span>
+        <div class="title" id="pdfProgressTitle">產生 PDF 中...</div>
+        <div class="sub" id="pdfProgressSub">請稍候</div>
+        <div class="bar-track">
+            <div class="bar-fill" id="pdfProgressBar"></div>
+        </div>
+        <div class="count" id="pdfProgressCount">0 / 0</div>
+    </div>
+</div>
+
+<script>
+    // ========================================================================
+    //  初始化
+    // ========================================================================
+
+    const DEFAULT_SIZES = [42, 32, 28];
+    let cards = [];
+    let previewIndex = 0;
+    let isProcessing = false;
+    let isImporting = false;
+
+    // ========================================================================
+    //  修復 xlsx 的 BG_SOURCE 錯誤
+    // ========================================================================
+    var BG_SOURCE = window.BG_SOURCE || {};
+
+    function initCards() {
+        cards = [{
+            fields: [
+                { text: '', fontSize: 42 },
+                { text: '', fontSize: 32 },
+                { text: '', fontSize: 28 }
+            ],
+            source: 'manual'
+        }];
+        renderCards();
+        updatePreview();
+        updateCardCount();
+    }
+
+    // ========================================================================
+    //  卡片操作
+    // ========================================================================
+
+    function addCard() {
+        if (cards.length >= 20) {
+            showToast('⚠️ 最多 20 張卡片');
+            return;
+        }
+        cards.push({
+            fields: [
+                { text: '', fontSize: 42 },
+                { text: '', fontSize: 32 },
+                { text: '', fontSize: 28 }
+            ],
+            source: 'manual'
+        });
+        renderCards();
+        updatePreview();
+        updateCardCount();
+        previewIndex = cards.length - 1;
+        updatePreviewIndex();
+    }
+
+    function removeCard(index) {
+        if (cards.length <= 1) {
+            showToast('⚠️ 至少保留 1 張卡片');
+            return;
+        }
+        cards.splice(index, 1);
+        renderCards();
+        updatePreview();
+        updateCardCount();
+        if (previewIndex >= cards.length) {
+            previewIndex = cards.length - 1;
+        }
+        updatePreviewIndex();
+    }
+
+    function addField(cardIndex) {
+        const card = cards[cardIndex];
+        if (!card) return;
+        if (card.fields.length >= 8) {
+            showToast('⚠️ 單張卡片最多 8 個欄位');
+            return;
+        }
+        card.fields.push({ text: '', fontSize: 28 });
+        renderCards();
+        updatePreview();
+    }
+
+    function removeField(cardIndex, fieldIndex) {
+        const card = cards[cardIndex];
+        if (!card) return;
+        if (card.fields.length <= 1) {
+            showToast('⚠️ 至少保留 1 個欄位');
+            return;
+        }
+        card.fields.splice(fieldIndex, 1);
+        renderCards();
+        updatePreview();
+    }
+
+    function updateField(cardIdx, fieldIdx, value) {
+        if (cards[cardIdx] && cards[cardIdx].fields[fieldIdx]) {
+            cards[cardIdx].fields[fieldIdx].text = value;
+            updatePreview();
+        }
+    }
+
+    function updateFieldSize(cardIdx, fieldIdx, value) {
+        if (cards[cardIdx] && cards[cardIdx].fields[fieldIdx]) {
+            cards[cardIdx].fields[fieldIdx].fontSize = parseInt(value);
+            updatePreview();
+        }
+    }
+
+    // ========================================================================
+    //  渲染卡片
+    // ========================================================================
+
+    function renderCards() {
+        const container = document.getElementById('cardsContainer');
+        container.innerHTML = '';
+        cards.forEach((card, cardIdx) => {
+            const div = document.createElement('div');
+            div.className = 'card-item';
+            const sourceLabel = card.source === 'excel' ?
+                '<span class="card-source">📊 Excel</span>' :
+                '<span class="card-source" style="background:#f5ede2;color:#b0a090;">✏️ 手動</span>';
+            div.innerHTML = `
+                <div class="card-header">
+                    <span class="card-num">📄 卡片 #${cardIdx + 1} ${sourceLabel}</span>
+                    <button class="btn-remove-card" onclick="removeCard(${cardIdx})" ${cards.length <= 1 ? 'disabled style="opacity:0.3;"' : ''}>✕</button>
+                </div>
+                <div class="field-list">
+                    ${card.fields.map((field, fieldIdx) => `
+                        <div class="field-row">
+                            <span class="field-label">${fieldIdx + 1}</span>
+                            <input type="text" class="card-field" data-card="${cardIdx}" data-field="${fieldIdx}" placeholder="請輸入文字..." value="${escapeHtml(field.text)}" oninput="updateField(${cardIdx}, ${fieldIdx}, this.value)">
+                            <select class="card-size" data-card="${cardIdx}" data-field="${fieldIdx}" onchange="updateFieldSize(${cardIdx}, ${fieldIdx}, this.value)">
+                                ${generateSizeOptions(field.fontSize || 28)}
+                            </select>
+                            <button class="btn-del-field" onclick="removeField(${cardIdx}, ${fieldIdx})" ${card.fields.length <= 1 ? 'disabled style="opacity:0.3;cursor:not-allowed;"' : ''}>✕</button>
+                        </div>
+                    `).join('')}
+                </div>
+                <button class="btn-add-field" onclick="addField(${cardIdx})">＋ 新增欄位</button>
+            `;
+            container.appendChild(div);
+        });
+        updatePreview();
+        updateCardCount();
+    }
+
+    function generateSizeOptions(selected) {
+        let html = '';
+        for (let i = 16; i <= 100; i += 2) {
+            html += `<option value="${i}" ${i === selected ? 'selected' : ''}>${i}px</option>`;
+        }
+        return html;
+    }
+
+    function updateCardCount() {
+        document.getElementById('cardCount').textContent = `共 ${cards.length} 張`;
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // ========================================================================
+    //  日期廳房合併顯示
+    // ========================================================================
+
+    function updateVenueDisplay() {
+        const dateVal = document.getElementById('dateInput').value.trim();
+        const venueVal = document.getElementById('venueInput').value.trim();
+        const display = document.getElementById('venueDisplay');
+        if (dateVal || venueVal) {
+            display.textContent = `合併顯示：${dateVal || '____'}-${venueVal || '廳房'}`;
+        } else {
+            display.textContent = '合併顯示：mmdd-xx廳';
+        }
+    }
+
+    document.getElementById('dateInput').addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4);
+        updateVenueDisplay();
+    });
+
+    document.getElementById('venueInput').addEventListener('input', function() {
+        updateVenueDisplay();
+    });
+
+    // ========================================================================
+    //  紙張尺寸切換
+    // ========================================================================
+
+    function getPaperSize() {
+        const selected = document.querySelector('input[name="paperSize"]:checked');
+        return selected ? selected.value : 'small';
+    }
+
+    document.querySelectorAll('input[name="paperSize"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.querySelectorAll('.paper-option').forEach(opt => {
+                opt.classList.toggle('active', opt.querySelector('input').checked);
+            });
+            updatePreviewFrameSize();
+        });
+    });
+
+    function updatePreviewFrameSize() {
+        const frame = document.getElementById('previewFrame');
+        const size = getPaperSize();
+        frame.className = 'preview-frame ' + size;
+    }
+
+    // ========================================================================
+    //  Excel 匯入
+    // ========================================================================
+
+    function importExcel() {
+        if (isImporting) return;
+
+        const fileInput = document.getElementById('excelFile');
+        const file = fileInput.files[0];
+        if (!file) {
+            showToast('⚠️ 請先選擇 Excel 檔案');
+            return;
+        }
+
+        isImporting = true;
+        const btn = document.getElementById('importBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ 讀取中...';
+
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            try {
+                const data = new Uint8Array(evt.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+                const rows = json.filter(row => row.some(c => c !== undefined && c !== null && c !== ''));
+
+                if (rows.length < 2) {
+                    showToast('⚠️ Excel 沒有資料列 (至少需標題列 + 1 筆資料)');
+                    btn.disabled = false;
+                    btn.textContent = '📥 匯入產生卡片';
+                    isImporting = false;
+                    return;
+                }
+
+                const headers = rows[0].filter(h => h && h.toString().trim() !== '').map(h => h.toString().trim());
+                const maxCols = Math.min(headers.length, 6);
+
+                if (maxCols === 0) {
+                    showToast('⚠️ 無法識別欄位標題');
+                    btn.disabled = false;
+                    btn.textContent = '📥 匯入產生卡片';
+                    isImporting = false;
+                    return;
+                }
+
+                const dataRows = rows.slice(1);
+                if (dataRows.length === 0) {
+                    showToast('⚠️ 沒有資料列');
+                    btn.disabled = false;
+                    btn.textContent = '📥 匯入產生卡片';
+                    isImporting = false;
+                    return;
+                }
+
+                if (cards.length > 0) {
+                    if (!confirm(`目前有 ${cards.length} 張卡片，匯入將取代所有卡片。\n確定要繼續嗎？`)) {
+                        btn.disabled = false;
+                        btn.textContent = '📥 匯入產生卡片';
+                        isImporting = false;
+                        return;
+                    }
+                }
+
+                const newCards = [];
+                dataRows.forEach((row, rowIdx) => {
+                    const fields = [];
+                    for (let i = 0; i < maxCols; i++) {
+                        let text = (row[i] !== undefined && row[i] !== null) ? String(row[i]).trim() : '';
+                        const defaultSize = [42, 34, 28, 24, 22, 20];
+                        fields.push({
+                            text: text,
+                            fontSize: defaultSize[i] || 28
+                        });
+                    }
+                    if (fields.length === 0) {
+                        fields.push({ text: '', fontSize: 42 });
+                    }
+                    newCards.push({
+                        fields: fields,
+                        source: 'excel'
+                    });
+                });
+
+                cards = newCards;
+                renderCards();
+                updatePreview();
+                updateCardCount();
+                previewIndex = 0;
+                updatePreviewIndex();
+
+                showToast(`✅ 成功匯入 ${cards.length} 張卡片，可繼續手動編輯調整`);
+
+            } catch (err) {
+                showToast('❌ 匯入失敗: ' + err.message);
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '📥 匯入產生卡片';
+                isImporting = false;
+                fileInput.value = '';
+            }
+        };
+        reader.onerror = function() {
+            showToast('❌ 讀取檔案失敗');
+            btn.disabled = false;
+            btn.textContent = '📥 匯入產生卡片';
+            isImporting = false;
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    // ========================================================================
+    //  預覽
+    // ========================================================================
+
+    function updatePreview() {
+        if (cards.length === 0) return;
+        const idx = Math.min(previewIndex, cards.length - 1);
+        const card = cards[idx];
+        if (!card) return;
+
+        const textColor = document.getElementById('textColor').value;
+        const fontWeight = document.getElementById('fontWeight').value;
+
+        let contentHtml = '';
+        card.fields.forEach(f => {
+            if (f.text && f.text.trim()) {
+                contentHtml +=
+                    `<div class="preview-line" style="font-size:${f.fontSize}px; font-weight:${fontWeight}; color:${textColor};">${escapeHtml(f.text)}</div>`;
+            }
+        });
+
+        if (!contentHtml) {
+            contentHtml = `<div style="color:#ccc;font-size:0.8rem;">(請輸入內容)</div>`;
+        }
+
+        document.getElementById('previewContentTop').innerHTML = contentHtml;
+        document.getElementById('previewContentBottom').innerHTML = contentHtml;
+
+        updatePreviewFrameSize();
+        updatePreviewIndex();
+    }
+
+    function updatePreviewIndex() {
+        const total = cards.length;
+        const idx = Math.min(previewIndex, total - 1);
+        document.getElementById('previewIndex').textContent = `${idx + 1} / ${total}`;
+        document.getElementById('prevPreview').disabled = idx <= 0;
+        document.getElementById('nextPreview').disabled = idx >= total - 1;
+    }
+
+    function prevPreview() {
+        if (previewIndex > 0) {
+            previewIndex--;
+            updatePreview();
+        }
+    }
+
+    function nextPreview() {
+        if (previewIndex < cards.length - 1) {
+            previewIndex++;
+            updatePreview();
+        }
+    }
+
+    // ========================================================================
+    //  🔥🔥🔥 前端直接產生 PDF（使用 html2canvas + jsPDF）
+    //  優點：中文正常、無外框、無分隔線、2mm 邊界
+    // ========================================================================
+
+    function generatePDFOnPhone() {
+        // ----- 1. 驗證輸入 -----
+        const dateVal = document.getElementById('dateInput').value.trim();
+        const venueVal = document.getElementById('venueInput').value.trim();
+        
+        if (!dateVal || dateVal.length !== 4) {
+            showToast('⚠️ 請輸入 4 位日期 (例如：0704)');
+            document.getElementById('dateInput').focus();
+            return;
+        }
+        if (!venueVal) {
+            showToast('⚠️ 請輸入廳房名稱');
+            document.getElementById('venueInput').focus();
+            return;
+        }
+        
+        // 檢查卡片內容
+        let hasContent = false;
+        cards.forEach(card => {
+            card.fields.forEach(f => {
+                if (f.text && f.text.trim()) hasContent = true;
+            });
+        });
+        
+        if (!hasContent) {
+            showToast('⚠️ 請至少輸入一個欄位的內容');
+            return;
+        }
+
+        // ----- 2. 檢查函式庫是否載入 -----
+        if (typeof html2canvas === 'undefined' || typeof jspdf === 'undefined') {
+            showToast('⚠️ PDF 函式庫載入失敗，請檢查網路');
+            return;
+        }
+
+        // ----- 3. 顯示進度 -----
+        const overlay = document.getElementById('pdfProgressOverlay');
+        overlay.classList.add('active');
+        document.getElementById('pdfProgressTitle').textContent = '📄 產生 PDF 中';
+        document.getElementById('pdfProgressSub').textContent = '準備中...';
+        document.getElementById('pdfProgressBar').style.width = '0%';
+        document.getElementById('pdfProgressCount').textContent = '0 / ' + cards.length;
+
+        // ----- 4. 取得設定（與原始版本一致：邊距 2mm）-----
+        const paperSize = getPaperSize();
+        const isLarge = paperSize === 'large';
+        const cardW = isLarge ? 148 : 130;   // mm
+        const cardH = isLarge ? 210 : 140;   // mm
+        const marginX = -2;   // 與原始 PRINT_MARGIN_LEFT 一致
+        const marginY = -2;   // 與原始 PRINT_MARGIN_TOP 一致
+        
+        const textColor = document.getElementById('textColor').value;
+        const fontWeight = document.getElementById('fontWeight').value;
+
+        // ----- 5. 建立 PDF（A4）-----
+        const { jsPDF } = jspdf;
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
+
+        // ----- 6. 對每張卡片處理 -----
+        let completed = 0;
+        const totalCards = cards.length;
+
+        function processCard(index) {
+            if (index >= totalCards) {
+                // 所有卡片處理完成，下載 PDF
+                document.getElementById('pdfProgressBar').style.width = '100%';
+                document.getElementById('pdfProgressSub').textContent = '下載中...';
+                const fileName = dateVal + '-' + venueVal + '.pdf';
+                setTimeout(function() {
+                    doc.save(fileName);
+                    overlay.classList.remove('active');
+                    showToast('✅ ' + fileName + ' 已下載 (' + totalCards + ' 張)', 'success');
+                }, 300);
+                return;
+            }
+
+            // 更新進度
+            const progress = (index / totalCards) * 100;
+            document.getElementById('pdfProgressBar').style.width = progress + '%';
+            document.getElementById('pdfProgressCount').textContent = (index + 1) + ' / ' + totalCards;
+            document.getElementById('pdfProgressSub').textContent = '處理第 ' + (index + 1) + ' 張卡片...';
+
+            // ----- 產生該卡片的 HTML（無外框、無對折線）-----
+            const card = cards[index];
+            const cardHtml = generateCardHTMLForPDF(card, paperSize, textColor, fontWeight);
+
+            // ----- 建立隱藏容器 -----
+            const container = document.createElement('div');
+            container.style.position = 'fixed';
+            container.style.left = '-9999px';
+            container.style.top = '-9999px';
+            container.style.width = cardW + 'mm';
+            container.style.height = cardH + 'mm';
+            container.style.background = 'white';
+            container.style.padding = '0';
+            container.style.margin = '0';
+            container.style.zIndex = '-1';
+            container.style.overflow = 'hidden';
+            container.innerHTML = cardHtml;
+            document.body.appendChild(container);
+
+            // ----- 使用 html2canvas 轉為圖片 -----
+            html2canvas(container, {
+                scale: 3,
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#ffffff',
+                width: cardW * 3.78,
+                height: cardH * 3.78,
+                allowTaint: true,
+                foreignObjectRendering: false
+            }).then(function(canvas) {
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                
+                // 新增頁面（第一張不需要）
+                if (index > 0) {
+                    doc.addPage();
+                }
+                
+                // 🔥 繪製到 PDF：左上角 2mm 邊距，實際尺寸
+                doc.addImage(imgData, 'JPEG', marginX, marginY, cardW, cardH);
+                
+                document.body.removeChild(container);
+                completed++;
+                processCard(index + 1);
+                
+            }).catch(function(err) {
+                console.error('html2canvas 失敗:', err);
+                document.body.removeChild(container);
+                // 失敗時繼續下一張
+                processCard(index + 1);
+            });
+        }
+
+        // 開始處理第一張
+        processCard(0);
+    }
+
+    // ========================================================================
+    //  🔥 產生單張卡片的 HTML（PDF 專用 - 無外框、無對折線、純內容）
+    // ========================================================================
+
+    function generateCardHTMLForPDF(card, paperSize, textColor, fontWeight) {
+        const isLarge = paperSize === 'large';
+        const cardW = isLarge ? 148 : 130;
+        const cardH = isLarge ? 210 : 140;
+        
+        let contentHtml = '';
+        card.fields.forEach(f => {
+            if (f.text && f.text.trim()) {
+                const size = f.fontSize || 28;
+                contentHtml += `<div style="font-size:${size}px; font-weight:${fontWeight}; color:${textColor}; text-align:center; word-break:break-word; line-height:1.3; margin:2px 0; font-family:'Noto Sans TC','微軟正黑體',sans-serif;">${escapeHtml(f.text)}</div>`;
+            }
+        });
+        
+        if (!contentHtml) {
+            contentHtml = '<div style="color:#ccc;font-size:20px;text-align:center;font-family:\'Noto Sans TC\',\'微軟正黑體\',sans-serif;">(請輸入內容)</div>';
+        }
+        
+        // 🔥 純內容：只有上下兩個半部，無外框、無對折線、無邊框
+        return `
+        <div style="width:${cardW}mm;height:${cardH}mm;background:white;display:flex;flex-direction:column;overflow:hidden;font-family:'Noto Sans TC','微軟正黑體',sans-serif;padding:0;margin:0;">
+            <div style="width:100%;height:50%;display:flex;align-items:center;justify-content:center;padding:4mm;transform:rotate(180deg);margin:0;">
+                <div style="text-align:center;width:100%;">${contentHtml}</div>
+            </div>
+            <div style="width:100%;height:50%;display:flex;align-items:center;justify-content:center;padding:4mm;margin:0;">
+                <div style="text-align:center;width:100%;">${contentHtml}</div>
+            </div>
+        </div>
+        `;
+    }
+
+    // ========================================================================
+    //  建立文件 (送出) - 儲存到試算表
+    // ========================================================================
+
+    function createDocument() {
+        if (isProcessing) return;
+
+        const dateVal = document.getElementById('dateInput').value.trim();
+        const venueVal = document.getElementById('venueInput').value.trim();
+
+        if (!dateVal || dateVal.length !== 4) {
+            showToast('⚠️ 請輸入 4 位日期 (例如：0704)');
+            document.getElementById('dateInput').focus();
+            return;
+        }
+        if (!venueVal) {
+            showToast('⚠️ 請輸入廳房名稱');
+            document.getElementById('venueInput').focus();
+            return;
+        }
+
+        let hasContent = false;
+        const cardsData = cards.map(card => {
+            const fields = card.fields.map(f => ({
+                text: f.text || '',
+                fontSize: f.fontSize || 28
+            }));
+            if (fields.some(f => f.text.trim())) hasContent = true;
+            return { fields: fields };
+        });
+
+        if (!hasContent) {
+            showToast('⚠️ 請至少輸入一個欄位的內容');
+            return;
+        }
+
+        const textColor = document.getElementById('textColor').value;
+        const fontWeight = document.getElementById('fontWeight').value;
+
+        const styleSettings = {
+            textColor: textColor,
+            fontWeight: fontWeight,
+            fontFamily: "'Noto Sans TC', '微軟正黑體', sans-serif"
+        };
+
+        const paperSize = getPaperSize();
+
+        isProcessing = true;
+        const overlay = document.getElementById('progressOverlay');
+        overlay.classList.add('active');
+        document.getElementById('progressText').textContent = '建立文件中...';
+
+        google.script.run
+            .withSuccessHandler(function(result) {
+                overlay.classList.remove('active');
+                isProcessing = false;
+
+                if (result.success) {
+                    showResult(result);
+                    showToast('✅ 文件建立成功！');
+                    autoClear();
+                } else {
+                    showToast('❌ ' + result.msg);
+                }
+            })
+            .withFailureHandler(function(err) {
+                overlay.classList.remove('active');
+                isProcessing = false;
+                showToast('❌ 連線失敗: ' + err);
+            })
+            .saveDocument(dateVal, venueVal, cardsData, styleSettings, paperSize);
+    }
+
+    function showResult(result) {
+        const box = document.getElementById('resultBox');
+        const sizeLabel = result.paperSize === 'large' ? '大桌卡' : '小桌卡';
+        document.getElementById('resultTitle').textContent = `✅ ${result.dateVenue} 已建立`;
+        document.getElementById('resultDetail').textContent =
+            `文件代碼：${result.docCode} ｜ 共 ${result.totalCount} 張 ｜ 有效 ${result.expireHours} 小時 ｜ ${sizeLabel}`;
+        box.classList.add('show');
+        document.getElementById('createBtn').disabled = true;
+        box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function autoClear() {
+        cards.forEach(card => {
+            card.fields.forEach(f => {
+                f.text = '';
+            });
+            card.source = 'manual';
+        });
+        renderCards();
+        updatePreview();
+        document.getElementById('dateInput').value = document.getElementById('dateInput').value.trim();
+        document.getElementById('venueInput').value = document.getElementById('venueInput').value.trim();
+        updateVenueDisplay();
+    }
+
+    function continueEditing() {
+        document.getElementById('resultBox').classList.remove('show');
+        document.getElementById('createBtn').disabled = false;
+        autoClear();
+        document.getElementById('dateInput').focus();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        showToast('🔄 已清空，請編輯下一份');
+    }
+
+    // ========================================================================
+    //  清空全部
+    // ========================================================================
+
+    function clearAll() {
+        if (!confirm('確定要清空所有內容嗎？')) return;
+        cards.forEach(card => {
+            card.fields.forEach(f => {
+                f.text = '';
+            });
+            card.source = 'manual';
+        });
+        renderCards();
+        updatePreview();
+        document.getElementById('dateInput').value = '';
+        document.getElementById('venueInput').value = '';
+        updateVenueDisplay();
+        document.getElementById('resultBox').classList.remove('show');
+        document.getElementById('createBtn').disabled = false;
+        showToast('🗑️ 已清空');
+    }
+
+    // ========================================================================
+    //  Toast
+    // ========================================================================
+
+    function showToast(message) {
+        let toast = document.querySelector('.toast');
+        if (toast) toast.remove();
+
+        toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+    // ========================================================================
+    //  事件綁定
+    // ========================================================================
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initCards();
+        updateVenueDisplay();
+        updatePreviewFrameSize();
+
+        document.getElementById('textColor').addEventListener('change', updatePreview);
+        document.getElementById('fontWeight').addEventListener('change', updatePreview);
+
+        document.getElementById('venueInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') createDocument();
+        });
+        document.getElementById('dateInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') createDocument();
+        });
+
+        document.getElementById('excelFile').addEventListener('change', function() {
+            if (this.files.length > 0) {
+                importExcel();
+            }
+        });
+
+        document.getElementById('dateInput').focus();
+
+        console.log('✅ 桌卡修改系統 v3.6 - 編輯頁載入完成');
+        console.log('📌 功能：Excel 匯入、大小桌卡選擇、前端產生 PDF（中文正常、2mm 邊界）');
+    });
+</script>
+
 </body>
 </html>
