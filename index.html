@@ -142,47 +142,55 @@
             font-weight: 600;
         }
 
-        /* ====================================================================
-           紙張尺寸
-           ==================================================================== */
-        .paper-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .paper-row .paper-option {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: white;
-            padding: 6px 14px;
-            border-radius: 40px;
-            border: 2px solid #dac29c;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .paper-row .paper-option.active {
-            border-color: #c9a03d;
-            background: #f5ede2;
-        }
-        .paper-row .paper-option input[type="radio"] {
-            width: 16px;
-            height: 16px;
-            accent-color: #c9a03d;
-            cursor: pointer;
-        }
-        .paper-row .paper-option label {
-            font-weight: 600;
-            color: #8b6946;
-            font-size: 0.75rem;
-            cursor: pointer;
-        }
-        .paper-row .paper-option .size-desc {
-            font-size: 0.55rem;
-            color: #b0a090;
-            font-weight: 400;
-        }
+       /* ====================================================================
+   紙張尺寸 - 按鈕並排且縮短
+   ==================================================================== */
+.paper-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.paper-row .paper-option {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: white;
+    padding: 6px 10px;
+    border-radius: 40px;
+    border: 2px solid #dac29c;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;                    /* 兩個按鈕平均分配寬度 */
+    justify-content: center;    /* 內容置中 */
+}
+
+.paper-row .paper-option:hover {
+    border-color: #c9a03d;
+}
+.paper-row .paper-option.active {
+    border-color: #c9a03d;
+    background: #f5ede2;
+}
+.paper-row .paper-option input[type="radio"] {
+    width: 14px;
+    height: 14px;
+    accent-color: #c9a03d;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.paper-row .paper-option label {
+    font-weight: 600;
+    color: #8b6946;
+    font-size: 0.7rem;
+    cursor: pointer;
+    white-space: nowrap;        /* 文字不換行 */
+}
+.paper-row .paper-option .size-desc {
+    font-size: 0.5rem;
+    color: #b0a090;
+    font-weight: 400;
+}
 
         /* ====================================================================
            Excel 匯入
@@ -569,7 +577,7 @@
             }
 
             .preview-wrapper {
-                transform: scale(0.45);
+                transform: scale(0.55);
             }
 
             /* 極小螢幕再縮小 */
@@ -579,7 +587,7 @@
                     min-height: 120px;
                 }
                 .preview-wrapper {
-                    transform: scale(0.40);
+                    transform: scale(0.50);
                 }
             }
 
@@ -589,7 +597,7 @@
                     min-height: 100px;
                 }
                 .preview-wrapper {
-                    transform: scale(0.25);
+                    transform: scale(0.45);
                 }
             }
         }
@@ -612,7 +620,7 @@
                 min-height: 220px;
             }
             .preview-wrapper {
-                transform: scale(0.85);
+                transform: scale(0.75);
             }
         }
 
