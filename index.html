@@ -1,378 +1,396 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>典華婚訂 - 颱風災害預防SOP</title>
+    <title>越越  未應答宣告 電話轉接SOP v1.2</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; 
-            background: #f0f4f8; 
-            padding: 20px;
-            color: #1e293b;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container { 
-            max-width: 1300px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 25px 30px; 
-            border-radius: 16px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-        h1 { 
-            color: #0f2b45; 
-            border-left: 6px solid #f59e0b; 
-            padding-left: 16px; 
-            font-size: 28px;
+        body {
+            background: linear-gradient(145deg, #0b3b2c 0%, #1a5e4a 45%, #2a7a5f 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+            margin: 0;
         }
-        .subtitle { font-size: 16px; font-weight: normal; color: #64748b; margin-left: 8px; }
-        
-        /* 控制列 */
-        .controls {
+        .card {
+            max-width: 760px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(2px);
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0, 20, 10, 0.6), 0 0 0 4px #ffffff88, 0 0 0 8px #2a7a5f66;
+            padding: 2.2rem 2.5rem;
+            border: 4px solid #ffffff;
+            transition: 0.1s;
+        }
+        @media (max-width: 550px) {
+            .card {
+                padding: 1.5rem 1.2rem;
+                border-width: 3px;
+                max-width: 100%;
+            }
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 1.8rem;
+            letter-spacing: -0.3px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        }
+        .section-block {
+            background: #e7f5ea;
+            border: 4px solid #ffffff;
+            border-radius: 24px;
+            padding: 1.2rem 1.8rem;
+            margin-bottom: 1.8rem;
+            box-shadow: 0 4px 12px rgba(0, 20, 0, 0.2), inset 0 1px 4px rgba(255,255,255,0.8);
+            transition: 0.1s;
+        }
+        .section-block:last-of-type {
+            margin-bottom: 1.8rem;
+        }
+        .section-header {
             display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin: 25px 0 20px 0;
-            padding: 15px 0;
-            border-top: 1px solid #e9edf2;
-            border-bottom: 1px solid #e9edf2;
-            align-items: center;
+            align-items: baseline;
+            flex-wrap: nowrap;
+            column-gap: 0.4rem;
+            row-gap: 0;
+            margin-bottom: 0.6rem;
+            white-space: nowrap;
+            overflow: visible;
         }
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+        .section-header h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            display: inline;
+            margin: 0;
+            line-height: 1.3;
+            flex-shrink: 0;
         }
-        .btn {
-            padding: 8px 20px;
+        .section-header .phone-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0055b3;
+            letter-spacing: 0.3px;
+            line-height: 1.2;
+            flex-shrink: 0;
+            margin-left: 0.1rem;
+        }
+        .section-header .phone-number.green {
+            color: #0055b3;
+        }
+        .change-block .section-header {
+            flex-wrap: nowrap;
+            gap: 0.2rem;
+            overflow: visible;
+        }
+        .change-block .section-header h2 {
+            font-size: 1.1rem;
+        }
+        .change-block .section-header .phone-number {
+            font-size: 1.5rem;
+        }
+
+        .step-list {
+            list-style: none;
+            padding-left: 0;
+            margin: 0.2rem 0 0 0;
+        }
+        .step-list li {
+            padding: 0.2rem 0 0.2rem 1.8rem;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%231a6d46" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>') left center no-repeat;
+            background-size: 1.2rem;
+            color: #1a1a1a;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        .step-list li strong {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        .inline-code {
+            background: #d4eee0;
+            padding: 0.2rem 1rem;
             border-radius: 30px;
-            border: 1px solid #cbd5e1;
-            background: white;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: #334155;
-        }
-        .btn:hover { background: #f1f5f9; }
-        .btn.active {
-            background: #0f2b45;
-            color: white;
-            border-color: #0f2b45;
-        }
-        .btn.phase-btn.active { background: #1e4a6f; border-color: #1e4a6f; }
-        .btn.version-btn.active { background: #6b4f3c; border-color: #6b4f3c; }
-        
-        .badge-count {
-            margin-left: 6px;
-            background: #e2e8f0;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 13px;
-        }
-        .btn.active .badge-count { background: rgba(255,255,255,0.2); color: #e2e8f0; }
-
-        /* 流程摘要 */
-        .flow-summary {
-            background: #f8fafc;
-            padding: 14px 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            border: 1px solid #e2e8f0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px 20px;
-            font-size: 14px;
-        }
-        .flow-step { display: flex; align-items: center; gap: 6px; }
-        .flow-arrow { color: #94a3b8; font-weight: bold; }
-
-        /* 任務看板 */
-        .task-board {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 16px;
-            margin-top: 10px;
-        }
-        .task-card {
-            background: #ffffff;
-            border: 1px solid #e9edf2;
-            border-radius: 12px;
-            padding: 18px 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-            transition: 0.15s;
-            border-left: 5px solid #f59e0b;
-        }
-        .task-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
-        .task-card .task-title {
-            font-weight: 600;
-            font-size: 16px;
-            margin-bottom: 8px;
+            font-family: 'SF Mono', 'Menlo', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #cc3b3b;
+            border: 2px solid #b3d5bf;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(180, 40, 40, 0.15);
+            display: inline-block;
             line-height: 1.4;
-        }
-        .task-card .task-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px 20px;
-            font-size: 14px;
-            color: #475569;
-        }
-        .task-card .task-meta span {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .task-card .task-dept {
-            background: #eef2f6;
-            padding: 3px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
-        }
-        .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 40px 20px;
-            color: #94a3b8;
-            font-size: 16px;
+            letter-spacing: 0.5px;
         }
 
-        /* 頁尾 */
-        .footer-note {
-            margin-top: 35px;
-            padding-top: 20px;
-            border-top: 1px solid #e9edf2;
-            font-size: 14px;
-            color: #64748b;
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 8px;
+        .divider-light {
+            border: none;
+            border-top: 2px dashed #9ac0ab;
+            margin: 1.8rem 0 1.8rem 0;
         }
-        .footer-note strong { color: #0f2b45; }
+        .change-block {
+            background: #e7f5ea;
+            border: 4px solid #ffffff;
+            border-radius: 24px;
+            padding: 1.2rem 1.8rem;
+            margin: 1.8rem 0 0.5rem 0;
+            box-shadow: 0 4px 12px rgba(0, 20, 0, 0.2), inset 0 1px 4px rgba(255,255,255,0.8);
+        }
+        .change-block .section-header {
+            margin-bottom: 0.3rem;
+        }
+        .meta-grid {
+            margin-top: 0.6rem;
+            background: #d6eee0;
+            border-radius: 18px;
+            padding: 0.8rem 1.4rem;
+            border: 1px solid #b3d5bf;
+        }
+        .meta-grid p {
+            padding: 0.15rem 0;
+            color: #1a1a1a;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        .meta-grid strong {
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+        .meta-grid .inline-code {
+            background: #c5e4d4;
+            border-color: #9ac0ab;
+            color: #cc3b3b;
+            font-size: 1.3rem;
+            border: 2px solid #b3d5bf;
+        }
 
-        @media (max-width: 600px) {
-            .container { padding: 15px; }
-            h1 { font-size: 22px; }
-            .task-board { grid-template-columns: 1fr; }
-            .controls { flex-direction: column; align-items: stretch; }
+        .step-list li .inline-code {
+            font-size: 1.35rem;
+            padding: 0.15rem 1.1rem;
+            background: #d4eee0;
+            border: 2px solid #b3d5bf;
+            color: #cc3b3b;
+            box-shadow: 0 2px 8px rgba(180, 40, 40, 0.2);
+        }
+        .meta-grid .inline-code {
+            font-size: 1.3rem;
+            padding: 0.15rem 1.1rem;
+        }
+
+        @media (max-width: 520px) {
+            .section-header {
+                flex-wrap: wrap;
+                white-space: normal;
+                overflow: visible;
+            }
+            .change-block .section-header {
+                flex-wrap: wrap;
+                white-space: normal;
+                overflow: visible;
+            }
+            .change-block .section-header h2 {
+                font-size: 1.0rem;
+            }
+            .change-block .section-header .phone-number {
+                font-size: 1.3rem;
+            }
+            .section-header h2 {
+                font-size: 1.2rem;
+            }
+            .section-header .phone-number {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* ============================================================
+                   PDF 列印樣式 — 明確指定所有文字顏色
+                   ============================================================ */
+        @media print {
+            /* 頁面背景：淺色底，讓卡片有層次 */
+            body {
+                background: #dce8e0 !important;
+                padding: 0.3in;
+                display: block;
+            }
+
+            /* 最外層卡片：白底 + 深綠邊框 + 陰影 */
+            .card {
+                max-width: 100%;
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18) !important;
+                border: 4px solid #1a5e4a !important;
+                background: #ffffff !important;
+                backdrop-filter: none !important;
+                border-radius: 28px;
+                padding: 2rem 2.2rem;
+            }
+
+            /* 所有一般文字 → 黑色 */
+            .card,
+            .card * {
+                color: #1a1a1a !important;
+            }
+
+            /* 標題黑色 */
+            h1,
+            .card h1 {
+                color: #1a1a1a !important;
+            }
+            .section-header h2,
+            .change-block .section-header h2 {
+                color: #1a1a1a !important;
+            }
+            .step-list li,
+            .step-list li strong,
+            .meta-grid p,
+            .meta-grid strong {
+                color: #1a1a1a !important;
+            }
+
+            /* ----- 電話號碼 → 藍色 (不受一般文字黑色覆蓋) ----- */
+            .phone-number,
+            .phone-number.green,
+            .section-header .phone-number,
+            .section-header .phone-number.green,
+            .change-block .phone-number,
+            .change-block .phone-number.green {
+                color: #0055b3 !important;
+            }
+
+            /* ----- 重點代碼 (*77# / #77#) → 紅色 ----- */
+            .inline-code,
+            .step-list li .inline-code,
+            .meta-grid .inline-code {
+                color: #cc3b3b !important;
+                border: 2px solid #2b7a5a !important;
+                background: #d4eee0 !important;
+            }
+
+            /* 區塊樣式 */
+            .section-block,
+            .change-block {
+                border: 3px solid #1a5e4a !important;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+                background: #eef9f0 !important;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .meta-grid {
+                background: #e2f0e6 !important;
+                border: 1px solid #2b7a5a !important;
+            }
+
+            .divider-light {
+                border-top-color: #2b7a5a !important;
+            }
+
+            /* 強制標題與號碼同一行 */
+            .section-header {
+                flex-wrap: nowrap !important;
+                white-space: nowrap !important;
+                overflow: visible !important;
+            }
+            .change-block .section-header {
+                flex-wrap: nowrap !important;
+                white-space: nowrap !important;
+                overflow: visible !important;
+            }
+            .change-block .section-header h2 {
+                font-size: 1.1rem !important;
+            }
+            .change-block .section-header .phone-number {
+                font-size: 1.5rem !important;
+            }
+
+            /* 空的 footnote 隱藏 */
+            .footnote:empty {
+                display: none !important;
+            }
+
+            /* 確保清單項目符號顏色正確 */
+            .step-list li {
+                background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%231a6d46" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>') left center no-repeat !important;
+                background-size: 1.2rem !important;
+            }
+        }
+
+        .footnote:empty {
+            display: none;
+        }
+        .footnote {
+            margin-top: 1.2rem;
+            font-size: 0.9rem;
+            color: #d4ece0;
+            border-top: 1px solid rgba(180, 210, 180, 0.4);
+            padding-top: 1rem;
+            text-align: right;
+            text-shadow: 0 1px 2px rgba(0, 20, 0, 0.3);
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>
-        ⛈️ 颱風災害預防SOP
-        <span class="subtitle">典華婚訂資源整合股份有限公司</span>
-    </h1>
+<div class="card">
+    <h1>📞 越越 未應答轉接-電話轉接SOP <span style="font-size: 0.8rem; font-weight: 400; color: #1a5e4a; margin-left: 0.5rem;">v1.0</span></h1>
 
-    <!-- 控制按鈕 -->
-    <div class="controls">
-        <div class="btn-group">
-            <button class="btn phase-btn active" data-phase="pre">🌪️ 來臨前準備</button>
-            <button class="btn phase-btn" data-phase="post">☀️ 過後復原</button>
+    <!-- 轉接 區塊 -->
+    <div class="section-block">
+        <div class="section-header">
+            <h2>✨啟用未應答轉接：(目前已經設定好，無須每日操作)</h2>
+            <span class="phone-number green"></span>
         </div>
-        <div class="btn-group" style="margin-left: auto;">
-            <button class="btn version-btn active" data-version="v2">✅ V2 版</button>
-            <button class="btn version-btn" data-version="v1">📄 原始版</button>
+        <ol class="step-list" style="list-style-type: decimal; padding-left: 0.3rem;">
+            <li style="background: none; padding-left: 0.1rem; margin-bottom: 0.1rem;">
+                櫃台電話操作輸入 <span class="inline-code">*75#</span> 聽到「嘟嘟聲」即可掛斷完成轉接。
+            </li>
+            <li style="background: none; padding-left: 0.1rem; margin-top: 0.05rem;">
+                使用自己手機撥打餐廳電話 <span class="inline-code">02-8502-6600</span>，五響後聽到語音聲音即可掛斷，確認已轉接成功。
+            </li>
+        </ol>
+    </div>
+
+    <!-- 取消轉接 區塊 -->
+    <div class="section-block">
+        <div class="section-header">
+            <h2>✨如果要取消轉接：(有需要取消才操作)</h2>
+            <span class="phone-number"></span>
+        </div>
+        <ol class="step-list" style="list-style-type: decimal; padding-left: 0.3rem;">
+            <li style="background: none; padding-left: 0.1rem; margin-bottom: 0.1rem;">
+                公司電話輸入 <span class="inline-code">#75#</span> 聽到「嘟嘟聲」即可掛斷完成取消轉接。
+            </li>
+            <li style="background: none; padding-left: 0.2rem; margin-top: 0.05rem;">
+                使用自己手機撥打餐廳電話 <span class="inline-code">02-8502-6600</span>，聽不到語音，餐廳電話響超過五聲即可掛斷，確認已成功關閉轉接。
+            </li>
+        </ol>
+    </div>
+
+    <hr class="divider-light">
+
+    <!-- 2026/05/29 變更 區塊 -->
+    <div class="change-block">
+        <div class="section-header">
+            <h2>📌 2026/05/29 起下班轉接號碼變更為：</h2>
+            <span class="phone-number green">7753-8570</span>
+        </div>
+        <div class="meta-grid">
+            <p><strong>轉接類型：</strong>未定答轉接</p>
+            <p><strong>起始設定方式：</strong><span class="inline-code">*75轉接號碼#</span>（號碼更換才需要設定）</p>
+            <p><strong>取消方式：</strong><span class="inline-code">#75#</span></p>
         </div>
     </div>
 
-    <!-- 流程摘要（動態更新） -->
-    <div id="flowSummary" class="flow-summary">
-        <!-- 由 JavaScript 動態產生 -->
-    </div>
-
-    <!-- 任務看板 -->
-    <div id="taskBoard" class="task-board">
-        <!-- 由 JavaScript 動態產生 -->
-    </div>
-
-    <div class="footer-note">
-        <span>📋 總指揮：事務資源部 ｜ 最後更新：<span id="updateDate"></span></span>
-        <span>⚠️ 請依實際狀況調整任務與責任單位</span>
-    </div>
+    <div class="footnote"></div>
 </div>
-
-<script>
-    // ============================================================
-    // 1. 資料來源：根據您提供的 Excel 內容整理
-    // ============================================================
-    const SOP_DATA = {
-        // -------- V2 版 (目前主要使用) --------
-        v2: {
-            pre: [
-                { task: '排定2位以上留守人員，進行機動問題處理。', dept: '事務資源、服務部' },
-                { task: '測試運行發電機、檢查油料，確保問題發生時可使用。', dept: '事務資源' },
-                { task: '抽水機檢查，確認運轉正常。', dept: '事務資源' },
-                { task: '隨時注意車道排水溝清潔、排水順暢，預防發生積水問題。', dept: '事務資源' },
-                { task: '颱風來臨時，請勿關閉車道鐵捲門，預防鐵捲門迎風扭曲變型。', dept: '新都星保全' },
-                { task: '將大門口前旗桿上的旗織收起，預防破裂掉落。', dept: '事務資源' },
-                { task: '館外左側黃金飛瀑上白色帆布拆下，預防破裂掉落。', dept: '事務資源' },
-                { task: '大門旋轉門上方鐵板鎖好。', dept: '事務資源' },
-                { task: '1F FOOD廳戶外黑色造形火把，須倒放置，預防損壞。', dept: '事務資源' },
-                { task: '1F FOOD廳戶外植栽樹，須加以固定，預防損壞。', dept: '事務資源' },
-                { task: '檢查各緊急避難逃生窗(1F~6F)是否緊閉。', dept: '事務資源' },
-                { task: '堆放沙包，預防淹水。(B2同仁電梯旁統一集放)', dept: '事務資源、豐FOOD' },
-                { task: 'S1環境：隨時注意排水溝清潔、排水順暢。', dept: '事務資源' },
-                { task: 'S1圓心儀式堂，三個出入口以木條及繩子綁牢穩固。', dept: '事務資源' },
-                { task: 'S1檢查有無易吹落的物品，需加以固定或收起。', dept: '事務資源' },
-                { task: 'S1電梯口處需堆沙包，並以木條加強。', dept: '事務資源' },
-                { task: 'S1植物牆需加防風網，預防被風吹落。', dept: '事務資源' },
-                { task: 'CV環境：撤下美式燈泡，預防損壞吹落。', dept: '事務資源' },
-                { task: 'CV環境：將戶外桌椅收至室內，預防損壞。', dept: '服務部' },
-                { task: 'CV環境：固定戶外鞦韆。', dept: '事務資源' }
-            ],
-            post: [
-                { task: '復原大門口前旗桿上的旗織。', dept: '事務資源' },
-                { task: '復原1F FOOD廳戶外黑色造形火把。', dept: '事務資源' },
-                { task: '復原放倒的戶外植栽樹。', dept: '事務資源' },
-                { task: '移除1F FOOD廳外、大貨梯口、逃生梯出入口沙包。', dept: '事務資源、豐FOOD' },
-                { task: '復原S1圓心儀式堂，移除三個出入口木條及繩子。', dept: '事務資源' },
-                { task: '移除S1植物牆防風網。', dept: '事務資源' }
-            ]
-        },
-        // -------- V1 原始版 (差異較大，獨立呈現) --------
-        v1: {
-            pre: [
-                { task: '排定2位以上留守人員，進行機動問題處理。', dept: '事務資源、服務部' },
-                { task: '測試運行發電機、檢查油料，確保問題發生時可使用。', dept: '事務資源' },
-                { task: '抽水機檢查，確認運轉正常。', dept: '事務資源' },
-                { task: '隨時注意車道排水溝清潔、排水順暢，預防淹水。', dept: '事務資源' },
-                { task: '颱風來臨時，請勿關閉車道鐵捲門，預防變型。', dept: '新都星保全' },
-                { task: '將大門口前旗桿上的旗織收起，預防破裂掉落。', dept: '事務資源' },
-                { task: '館外左側黃金飛瀑上白色帆布拆下，預防破裂掉落。', dept: '事務資源' },
-                { task: '大門旋轉門上方鐵板鎖好。', dept: '事務資源' },
-                { task: '1F FOOD廳戶外黑色造形火把，須倒放置。', dept: '事務資源' },
-                { task: '1F FOOD廳戶外植栽樹，須加以固定。', dept: '事務資源' },
-                { task: '檢查各緊急避難逃生窗(1F~6F)是否緊閉。', dept: '事務資源' },
-                { task: '堆放沙包，預防淹水。(B2同仁電梯旁統一集放)', dept: '事務資源、豐FOOD' },
-                { task: 'S1環境：隨時注意排水溝清潔、排水順暢。', dept: '事務資源' },
-                { task: 'S1圓心儀式堂，三個出入口以木條及繩子綁牢穩固。', dept: '事務資源' },
-                { task: 'S1檢查有無易吹落的物品，需加以固定或收起。', dept: '事務資源' },
-                { task: 'S1電梯口處需堆沙包，並以木條加強。', dept: '事務資源' },
-                { task: 'S1植物牆需加防風網，預防被風吹落。', dept: '事務資源' },
-                { task: 'S1貨櫃門窗緊閉，預防損壞。', dept: '事務資源' },
-                { task: 'S1撤下美式燈泡，預防損壞吹落。', dept: '事務資源' },
-                { task: 'S1用餐區帆布挷緊，預防損壞吹落。', dept: '事務資源' },
-                { task: 'S1撤下帳棚收至室內，預防損壞吹落。', dept: '事務資源' },
-                { task: 'S1將戶外桌椅收至室內，預防損壞吹落。', dept: '服務部' },
-                { task: 'S1粉紅色貨櫃以布繩加以固定，預防損壞吹落。', dept: '事務資源' }
-            ],
-            post: [
-                { task: '復原大門口前旗桿上的旗織。', dept: '事務資源' },
-                { task: '復原館外左側黃金飛瀑上白色帆布。', dept: '事務資源' },
-                { task: '復原1F FOOD廳戶外黑色造形火把。', dept: '事務資源' },
-                { task: '復原放倒的戶外植栽樹。', dept: '事務資源' },
-                { task: '移除1F FOOD廳外、大貨梯口、逃生梯出入口沙包。', dept: '事務資源、豐FOOD' },
-                { task: '復原S1圓心儀式堂，移除三個出入口木條及繩子。', dept: '事務資源' },
-                { task: '移除S1植物牆防風網。', dept: '事務資源' },
-                { task: '移除S1粉紅色貨櫃固定布繩。', dept: '事務資源' }
-            ]
-        }
-    };
-
-    // 流程圖文字 (根據試算表內容整理)
-    const FLOW_TEXT = {
-        pre: [
-            '中央氣象局發佈陸上颱風警報',
-            '事務資源部確認準備事項',
-            '服務部、豐FOOD主管提供人員留守名單',
-            '事務資源部、服務部、豐FOOD執行準備事項',
-            '事務資源部確認完成'
-        ],
-        post: [
-            '中央氣象局解除陸上颱風警報',
-            '事務資源部確認復原事項',
-            '事務資源部、服務部、豐FOOD派員執行復原事項',
-            '事務資源部確認執行完成'
-        ]
-    };
-
-    // ============================================================
-    // 2. 渲染邏輯
-    // ============================================================
-    let currentPhase = 'pre';
-    let currentVersion = 'v2';
-
-    function render() {
-        const tasks = SOP_DATA[currentVersion]?.[currentPhase] || [];
-        const flowSteps = FLOW_TEXT[currentPhase] || [];
-
-        // 更新流程摘要
-        const flowDiv = document.getElementById('flowSummary');
-        if (flowSteps.length) {
-            flowDiv.innerHTML = flowSteps.map((step, idx) => {
-                const arrow = (idx < flowSteps.length - 1) ? '<span class="flow-arrow"> → </span>' : '';
-                return `<span class="flow-step">${idx+1}. ${step} ${arrow}</span>`;
-            }).join('');
-        } else {
-            flowDiv.innerHTML = '📌 流程圖請參考試算表「颱風預防災流程圖」工作表';
-        }
-
-        // 更新任務看板
-        const board = document.getElementById('taskBoard');
-        if (tasks.length === 0) {
-            board.innerHTML = `<div class="empty-state">📭 此階段目前沒有任務，請切換版本或階段檢視</div>`;
-            return;
-        }
-
-        board.innerHTML = tasks.map(item => {
-            // 處理多個部門顯示
-            const depts = item.dept.split(/[、,，]/).map(d => d.trim()).filter(Boolean);
-            const deptHtml = depts.map(d => `<span class="task-dept">${d}</span>`).join(' ');
-            return `
-                <div class="task-card">
-                    <div class="task-title">📌 ${item.task}</div>
-                    <div class="task-meta">
-                        <span>👤 責任單位：${deptHtml}</span>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        // 更新按鈕狀態
-        document.querySelectorAll('.phase-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.phase === currentPhase);
-        });
-        document.querySelectorAll('.version-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.version === currentVersion);
-        });
-    }
-
-    // ============================================================
-    // 3. 事件綁定與初始化
-    // ============================================================
-    document.addEventListener('DOMContentLoaded', function() {
-        // 階段切換
-        document.querySelectorAll('.phase-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                currentPhase = this.dataset.phase;
-                render();
-            });
-        });
-
-        // 版本切換
-        document.querySelectorAll('.version-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                currentVersion = this.dataset.version;
-                render();
-            });
-        });
-
-        // 顯示更新日期
-        const now = new Date();
-        document.getElementById('updateDate').textContent = 
-            `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
-
-        // 初始渲染
-        render();
-    });
-</script>
 </body>
 </html>
